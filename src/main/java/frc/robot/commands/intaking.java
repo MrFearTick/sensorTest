@@ -1,30 +1,52 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+// Motor command
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Feeder;
 
 public class intaking extends Command {
-  /** Creates a new intaking. */
-  public intaking() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  double m_intake_speed; 
+  Intake m_intake_motor;
+
+  double m_feeder_speed;
+  Feeder m_feeder_motor;
+
+  DigitalInput intakeSensor = Intake.intakeSensor;
+
+  public boolean getStatus(DigitalInput input) {
+    return input.get();
   }
 
-  // Called when the command is initially scheduled.
+  public intaking(Intake intake_motor, double intake_speed, Feeder feeder_motor, double feeder_speed) {
+    this.m_intake_speed = intake_speed;
+    this.m_intake_motor = intake_motor;
+
+    this.m_feeder_speed = feeder_speed;
+    this.m_feeder_motor = feeder_motor;
+    addRequirements(m_intake_motor, m_feeder_motor);
+  }
+
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_feeder_motor.run(m_feeder_speed);
 
-  // Called once the command ends or is interrupted.
+    if (!getStatus(intakeSensor)) {
+      m_intake_motor.run(m_intake_speed);
+    } else {
+      m_intake_motor.run(0);
+    }
+  }
+
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_intake_motor.run(0); m_feeder_motor.run(0);
+  }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
