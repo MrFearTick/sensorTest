@@ -15,10 +15,6 @@ public class intaking extends Command {
 
   DigitalInput intakeSensor = Intake.intakeSensor;
 
-  public boolean getStatus(DigitalInput input) {
-    return input.get();
-  }
-
   public intaking(Intake intake_motor, double intake_speed, Feeder feeder_motor, double feeder_speed) {
     this.m_intake_speed = intake_speed;
     this.m_intake_motor = intake_motor;
@@ -33,10 +29,8 @@ public class intaking extends Command {
 
   @Override
   public void execute() {
-    m_feeder_motor.run(m_feeder_speed);
-
-    if (!getStatus(intakeSensor)) {
-      m_intake_motor.run(m_intake_speed);
+    if (!m_intake_motor.getStatus()) {
+      m_intake_motor.run(m_intake_speed); m_feeder_motor.run(m_feeder_speed);
     } else {
       m_intake_motor.run(0);
     }

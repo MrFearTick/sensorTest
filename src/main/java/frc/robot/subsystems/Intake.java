@@ -13,13 +13,8 @@ public class Intake extends SubsystemBase {
 
     public Intake() {};
 
-    public void sensorRun(double speed) {
-        if (!intakeSensor.get()) {
-            intakeMotor.set(speed);
-        }
-        else {
-            intakeMotor.set(0);
-        }
+    public boolean getStatus() {
+        return intakeSensor.get();
     }
 
     public void run(double speed) {
